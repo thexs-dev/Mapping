@@ -5,7 +5,9 @@ The Mapping web app is free to access, publicly available with no fee, no creden
 
 # Main features:
 − Load your data and settings from a .json file in your Google Drive by adding the File ID to the Mapping web app url
+
 − Instantly filter across the entire data content as you type in the search box
+
 − Use checkboxes for easy grouping and filtering locations according to the main filter
 − Use additional filters in combination with the main filter to show selected locations
 − Filtering within a section works with “inclusive or” logic
