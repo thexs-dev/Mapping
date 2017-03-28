@@ -17,7 +17,7 @@ The Mapping web app is free to access, publicly available with no fee, no creden
 − Take advantage of the many more features provided by Google Maps  
 
 # Usage restrictions
-If your are using the Mapping web app code from this repository, you have to consider the following changes:
+If your are using the Mapping web app code from this repository, you have to consider the following changes:  
 − You have to use your own Polymer elements host, by replacing the base path in mapping.html file, with your path  
 − You have to use your own Google Maps Api key, by replacing the default value in xm-data.html file, with your api-key  
 − When building your .json files, you have to use your own paths for icons and elements  
