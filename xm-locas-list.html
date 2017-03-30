@@ -1,0 +1,74 @@
+<dom-module id="xm-locas-list">
+  <template>
+  <style>
+    paper-dialog { margin:0px 0px 0px 0px; position: absolute; top:10px; right:10px; width:350px; box-shadow: none; }
+    paper-dialog-scrollable { --paper-dialog-scrollable:  { padding: 0 15px; }; }
+    paper-material { margin:2px; padding:2px 5px; }
+    paper-card { margin:0px; padding:10px; }
+    paper-card:first-child { margin:0px; }
+    .actions { margin: 5px 0px; }
+    .ghost { background:LightGray; }
+    pre { font-family:'Roboto','Helvetica Neue',Helvetica,Arial,sans-serif; font-size:small; white-space:pre-wrap; margin:0px; }
+  </style>  
+  
+    <paper-dialog id="dialog" xmodal no-cancel-on-outside-click xno-cancel-on-esc-key >
+      <paper-dialog-scrollable>
+      
+      <template id="list" is="dom-repeat" items="{{locas}}" rendered-item-count="{{showing}}" >
+        <paper-material>
+          <pre >[[item.listing]]</pre>
+        </paper-material>
+      </template>
+      
+      </paper-dialog-scrollable>
+    
+      <div class="actions">([[showing]]) 
+        <template is="dom-if" if="[[devMode]]">
+          <paper-icon-button id="btn-test" icon="icons:build" on-click="_test" ></paper-icon-button>
+        </template>
+        <paper-icon-button icon="icons:close" affirmative dialog-dismiss autofocus style="float:right;" ></paper-icon-button>
+      </div>
+      
+    </paper-dialog>
+    
+  </template>
+  <script>
+    Polymer({
+      is: "xm-locas-list",
+      properties: {
+        locas: Array,
+        rendered: { type:Number, observer:"_rendered" }, 
+        devMode: { value:app.devMode },
+      },
+      
+      
+      open: function() {
+        var that = this;
+        var locas = document.querySelector("#locas"); 
+        this.locas = locas._instances.map(function(v,i){ 
+          var item = v.__data__.item; 
+          item.order = i;
+          item.listing = app.custom.listingTemplate.mustache(item.properties);
+          return item;
+        });
+        this.$.dialog.open();
+      },
+      
+      _rendered: function(){
+        if (!this.$.dialog.opened) return; 
+        this.open();
+        console.log("LL refreshed");
+      },
+      
+      _resort: function(){
+
+        this.locas.sort(function(a,b){ return a.properties.Name.localeCompare(b.properties.Name); });
+        this.$.list.render();
+      },
+      
+      _test: function(){
+        console.log(this.locas);
+      },
+    });
+  </script>
+</dom-module>

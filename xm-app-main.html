@@ -1,0 +1,108 @@
+<dom-module id="xm-app-main">
+  <style>
+    google-map { height:100vh; }
+  </style>
+  <template>
+  
+    <xm-filters search="{{search}}" groups="{{groups}}" group-by="{{groupBy}}" filters="{{filters}}" stamp="{{stamp}}"
+      showing="{{showing}}" total="{{locations.length}}"></xm-filters>
+    
+    <xm-data locations="{{locations}}" groups="{{groups}}" group-by="{{groupBy}}" filters="{{filters}}" xobserve="{{observe}}"
+      fields="{{fields}}" headers="{{headers}}" header="{{header}}" custom="{{custom}}" done="{{done}}" ></xm-data>
+    
+    <template is="dom-if" if="[[mapikey]]" >
+      <google-map id="maplocas" map="{{map}}" fit-to-markers single-info-window latitude="43.0895577" longitude="-79.0849436"
+        no-auto-tilt on-google-map-click="_map" click-events 
+        api-key="[[mapikey]]" on-google-map-ready="_mapReady" on-google-map-idle="_mapIdle" 
+        additional-map-options='{"mapTypeControl":"true","mapTypeControlOptions":{"position":"3"}}' >
+      
+        <template id="locas" is="dom-repeat" items="{{locations}}" filter="{{_filter(search,groups,filters,stamp)}}" observe="{{observe}}" delay="500"
+          rendered-item-count="{{showing}}">
+      
+          <google-map-marker latitude="[[item.latitude]]" longitude="[[item.longitude]]" title="{{item.title}}" 
+            icon="{{item.icon}}" draggable="true" on-google-map-marker-click="_infowindow" click-events >
+            
+          </google-map-marker>
+        
+        </template>
+      </google-map>
+    </template>
+    
+    <div hidden placeholder>
+      <xm-infowindow ></xm-infowindow>
+    </div>
+    
+    <xm-locas-list rendered="[[showing]]" ></xm-locas-list>
+    
+    <xm-postdata experimental custom="{{custom}}" done="{{done}}" ></xm-postdata>
+    
+  </template>
+  <script>
+    Polymer({
+      is: "xm-app-main",
+      properties: {
+        mapikey: { notify:true }
+      },
+      
+      _filter: function(s,g,f){
+        console.log("Filtering");
+        var groupBy = this.groupBy.title;
+        s = s.toLowerCase();
+        return function(item){
+          
+          var boos = (!s || Object.keys(item.properties).map(function(v){ return item.properties[v]; }).toString().toLowerCase().indexOf(s) > -1);
+          if (!boos) return false;
+          var boog = (g.indexOf(item.properties[groupBy]) > -1);
+          if (!boog) return false;
+          
+          var boof = true;
+          for (var i=0; i<f.length; i++) {
+            var fi = f[i];
+            
+            if (fi.checkboxes)
+              if (!fi.split) boof = (fi.selection.indexOf(item.properties[fi.property]) > -1);
+              else boof = item.properties[fi.property].split(fi.split).reduce(function(p,v){
+                return (fi.selection.indexOf(v) > -1) ? true : p; 
+              }, false);
+            
+            if (!boof) return false;
+            
+            
+            if (fi.slider) boof = (isNaN(item.properties[fi.property]) || item.properties[fi.property] <= fi.selection);
+            if (!boof) return false;
+          }
+          
+          return (boos && boog && boof); 
+        }
+        
+      },
+      
+      _infowindow: function(e){
+
+        if (this.infowindow) this.infowindow.close();
+        else this.infowindow = new google.maps.InfoWindow({
+
+          content: document.querySelector("xm-infowindow")
+        });
+        this.infowindow.content.header = this.header;
+        this.infowindow.content.headers = this.headers;
+        this.infowindow.content.item = e.model.item;
+
+
+        this.infowindow.open(this.map, e.target.marker);
+      },
+      
+      _map: function(e){
+        if (app.devMode) {
+          console.log(e); 
+          console.log(e.detail.latLng.lat(), e.detail.latLng.lng());
+          console.log(document.querySelector("google-map").zoom);
+        }
+        if (this.infowindow) this.infowindow.close();
+      },
+      
+      _mapReady: function(e) { console.log('map ready'); },
+      _mapIdle: function(e) { console.log('map idle'); app.mapidle = true; },
+    });
+  </script>
+</dom-module>

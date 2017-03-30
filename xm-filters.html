@@ -1,0 +1,156 @@
+<dom-module id="xm-filters">
+  <template>
+    <style include="iron-flex iron-flex-alignment">
+      #wrapper { padding: 14px 14px 0px; }
+      paper-dialog-scrollable { --paper-dialog-scrollable:  { padding: 0 10px; }; }
+      paper-checkbox { --paper-checkbox-checked-color: transparent; --paper-checkbox-unchecked-color:transparent; --paper-checkbox-checkmark-color: black; }
+      paper-card { position: absolute; top:10px; left:10px; z-index:1; padding:0px; xwidth:20%; max-width: 300px; }
+      .card-actions { padding: 5px 0px; }
+      .section { padding-top: 15px; }
+      paper-slider { width:95%; --paper-slider-input:{ width:75px; font-size:small; } }
+      xpaper-slider #sliderContainer.editable.paper-slider { margin-top: 5px; margin-bottom: 0px; } /* Doesn't work */
+      paper-progress { width:100%; }
+    </style>
+
+    <paper-card class="card-content" elevation="0" >
+
+    <div class="layout horizontal">
+      <paper-icon-button icon="menu" on-click="_hide"></paper-icon-button>
+      <paper-input no-label-float value="{{search::input}}"></paper-input>
+      <paper-icon-button suffix icon="search"></paper-icon-button>
+    </div>
+    <paper-progress id="working" indeterminate ></paper-progress>
+    
+    <div id="wrapper" hidden$="{{hide}}">
+    
+    <paper-dialog-scrollable id="scrollable" style="height:[[scrollableHeight]];">
+    <div id="scrollContent">
+    
+    <div>{{groupBy.title}}</div>
+    <template is="dom-repeat" id="groupByList" items="{{groupBy.list}}" >
+      <div>
+        <paper-checkbox checked="{{item.checked}}" on-change="_groups" noink >{{item.value}}{{item.tag}}
+          <img src="{{item.icon.url}}" style="height:18px;" ></img>
+        </paper-checkbox>
+      </div>
+    </template>
+    
+    <template is="dom-repeat" items="{{filters}}" as="filter" >
+      <template is="dom-if" if="{{filter.checkboxes}}">
+        <div class="section">{{filter.property}}</div>
+        <template is="dom-repeat" items="{{filter.list}}" >
+          <span style="display:{{filter.display}};">
+            <paper-checkbox checked="{{item.checked}}" on-change="_filters" noink >{{item.value}}{{item.tag}}</paper-checkbox>
+          </span>
+        </template>    
+      </template>
+    
+      <template is="dom-if" if="{{filter.slider}}">
+        <div class="section">{{filter.property}}{{filter.tag}}</div>
+          <paper-slider pin editable min="{{filter.min}}" max="{{filter.max}}" value="{{filter.selection}}" on-change="_filters" ></paper-slider>
+      </template>
+    </template>
+    
+    </div>
+    </paper-dialog-scrollable>
+    
+    <div class="layout horizontal" style="padding-top:15px;">
+      <span class="self-center flex">Showing {{showing}} / {{total}}</span>
+      <paper-icon-button id="btn-clear" icon="icons:clear" on-click="_switch" args="false" title="Hide All" ></paper-icon-button>
+      <paper-icon-button id="btn-refresh" icon="icons:refresh" on-click="_switch" args="true" title="Show All" ></paper-icon-button>
+    </div>
+    
+    <div class="card-actions">
+      <paper-icon-button id="btn-list" icon="icons:list" on-click="_list" title="Location List" ></paper-icon-button>
+      <paper-icon-button id="btn-fit" icon="{{_fitIcon(fitting)}}" on-click="_fit" xtoggles title="Fit map to markers switch" ></paper-icon-button>
+      <template is="dom-if" if="[[devMode]]">
+        <paper-icon-button id="btn-test" icon="icons:build" on-click="_test" style="float:right;" ></paper-icon-button>
+      </template>
+    </div>
+      
+    </div> 
+
+    </paper-card>
+
+  </template>
+  <script>
+    Polymer({
+      is: "xm-filters",
+      properties: {
+        search: { type:String, value:"", notify:true },
+        groups: { type:String, notify:true },
+        groupBy: { type:Object, notify:true },
+        filters: { type:Array, notify:true },
+        hide: { type:Boolean, value:true },
+        stamp: { type:Number, value:0, notify:true },
+        fitting: { type:Boolean, value:false },
+        devMode: { value:app.devMode },
+        scrollableHeight: { value:"0px" }, 
+      },
+      
+      attached: function(){
+        this_ = this;
+        window.onresize = function(){
+          var diffHeight = 190; 
+          var h = window.innerHeight - diffHeight;
+          this_.scrollableHeight = (this_.$.scrollContent.offsetHeight + 0).toString().concat("px");
+          this_.$.scrollable.style.maxHeight = h + "px";
+          console.log(this_.$.scrollContent.offsetHeight);
+        };
+        window.onresize();
+      },
+      
+      _groups: function(e){
+        this.groups = this.groupBy.list.map(function(v){ if (v.checked) return v.value; }).toString();
+      },
+      
+      _filters: function(e){
+        this.filters.forEach(function(f){
+          if (f.checkboxes) f.selection = f.list.map(function(v){ if (v.checked) return v.value; }).toString();
+          if (f.slider) ;
+        });
+        this.stamp = new Date().getTime();
+      },
+      
+      _hide: function(e){ this.hide = !this.hide; },
+      
+      _switch: function(e){
+        this.search = "";
+        var boo = e.path[1].getAttribute('args') == "true"; 
+        
+        for (var i=0; i<this.groupBy.list.length; i++) {
+          this.set(['groupBy', 'list', i, 'checked'], boo);
+        }
+        this._groups();
+        
+        for (var i=0; i<this.filters.length; i++) {
+          var fi = this.filters[i];
+          if (fi.checkboxes) for (var j=0; j<fi.list.length; j++) {
+            this.set(['filters', i, 'list', j, 'checked'], boo);
+          }
+          if (fi.slider) this.set(['filters', i, 'selection'], fi.max);
+        }
+        this._filters();
+        
+      },
+      
+      _list: function(e){
+        var locas = document.querySelector("xm-locas-list");
+        locas.open();
+      },
+      
+      _fit: function(e){
+        document.querySelector("#maplocas").fitToMarkers = ! document.querySelector("#maplocas").fitToMarkers;
+        this.fitting = !this.fitting;
+      },
+      _fitIcon: function(f){
+        return f ? "tab" : "tab-unselected";
+      },
+      
+      _test: function(e){
+        console.log(this.filters);
+        console.log(app);
+      },
+    });
+  </script>
+</dom-module>

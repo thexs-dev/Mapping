@@ -1,0 +1,341 @@
+getJsonCallback({
+  "global": {
+    "pageTitle": "Mapping by theXS",
+    "language": "en",
+    "version": "2.101sv53",
+    "generator": "MSheetsAO",
+    "author": "fausto@thexs.ca"
+  },
+  "headers": [
+    "Name",
+    "Category",
+    "Address",
+    "Company",
+    "Status",
+    "Range",
+    "More Info",
+    "Picture",
+    "Notes",
+    "Latitude",
+    "Longitude"
+  ],
+  "fields": {
+    "filter": "Category",
+    "name": "Name",
+    "address": "Address"
+  },
+  "groupBy": {
+    "title": "Category",
+    "list": [
+      {
+        "value": "1-Hints",
+        "qty": 2,
+        "icon": {
+          "url": "//[my-mapping-host]/Blue.svg"
+        },
+        "tag": " (2)",
+        "checked": true
+      },
+      {
+        "value": "Custom",
+        "qty": 1,
+        "icon": {
+          "url": "https://sites.google.com/a/thexs.ca/newgxs/assets/images/YellowFlag.png"
+        },
+        "tag": " (1)",
+        "checked": true
+      },
+      {
+        "value": "Extras",
+        "qty": 3,
+        "icon": {
+          "url": "//[my-mapping-host]/Aqua.svg"
+        },
+        "tag": " (3)",
+        "checked": true
+      },
+      {
+        "value": "Issues",
+        "qty": 3,
+        "icon": {
+          "url": "//[my-mapping-host]/Green.svg"
+        },
+        "tag": " (3)",
+        "checked": true
+      },
+      {
+        "value": "Pending",
+        "qty": 4,
+        "icon": {
+          "url": "//[my-mapping-host]/Magenta.svg"
+        },
+        "tag": " (4)",
+        "checked": true
+      }
+    ]
+  },
+  "filters": [
+    {
+      "property": "Range",
+      "kind": "slider",
+      "tag": " (-5,10)",
+      "slider": true,
+      "min": -5,
+      "max": 10,
+      "selection": 10
+    },
+    {
+      "property": "Status",
+      "kind": "checkboxes",
+      "tag": true,
+      "display": "inline-block",
+      "split": ",",
+      "checkboxes": true,
+      "list": [
+        {
+          "value": "Close",
+          "qty": 4,
+          "checked": true,
+          "tag": " (4)"
+        },
+        {
+          "value": "Escalated",
+          "qty": 2,
+          "checked": true,
+          "tag": " (2)"
+        },
+        {
+          "value": "Open",
+          "qty": 4,
+          "checked": true,
+          "tag": " (4)"
+        },
+        {
+          "value": "Pending",
+          "qty": 3,
+          "checked": true,
+          "tag": " (3)"
+        },
+        {
+          "value": "Waiting",
+          "qty": 1,
+          "checked": true,
+          "tag": " (1)"
+        }
+      ],
+      "values": [
+        "Close",
+        "Escalated",
+        "Open",
+        "Pending",
+        "Waiting"
+      ],
+      "selection": "Close,Escalated,Open,Pending,Waiting"
+    }
+  ],
+  "html": {
+    "infowindow": "https://[my-mapping-host]/xm-infowindow.html",
+    "locaslist": "https://[my-mapping-host]/xm-locas-list.html"
+  },
+  "custom": {
+    "headers": "Category,Address,Company,Status,Range,More Info,Picture,Notes",
+    "titleTemplate": null,
+    "listingTemplate": null,
+    "pageTitle": "Mapping - Demo",
+    "hideFilters": false,
+    "filtersQty": 2
+  },
+  "locations": [
+    {
+      "latitude": 43.6562208,
+      "longitude": -79.38063939999999,
+      "properties": {
+        "Name": "Mapping Team",
+        "Category": "1-Hints",
+        "Address": "1 Dundas Street E, Toronto, ON M5B 2R8, Canada",
+        "Company": "theXS",
+        "Status": "Close",
+        "Range": 2,
+        "More Info": "http://www.thexs.ca/xsmapping",
+        "Picture": "https://sites.google.com/a/thexs.ca/newgxs/assets/images/theXS-logo-IT-256x128.png",
+        "Notes": "Valid web and image urls are fine on any column. The web link is using ...⬈ as the link placeholder. The images would show up within a max-width of 160 px. You can also add more columns as needed.",
+        "Latitude": "optional [-90,90]",
+        "Longitude": "optional [-180,180]"
+      },
+      "id": 0
+    },
+    {
+      "latitude": 43.6387721,
+      "longitude": -79.3821042,
+      "properties": {
+        "Name": "G Scripts",
+        "Category": "1-Hints",
+        "Address": "Toronto, ON M5J 2G8, Canada",
+        "Company": "theXS",
+        "Status": "Close",
+        "Range": 3,
+        "More Info": "http://www.thexs.ca",
+        "Picture": "https://sites.google.com/a/thexs.ca/newgxs/assets/images/g-suite-gas-pm-fb.png",
+        "Notes": "If our focus is exclusively on bringing your Business into the Cloud, using the G Suite (formerly Google Apps for Work) many apps and tools, then our value proposition is building integrations, workflow automation and custom apps within and around your Domain in the G Suite."
+      },
+      "id": 1
+    },
+    {
+      "latitude": 43.5060127,
+      "longitude": -79.6333674,
+      "properties": {
+        "Name": "Real Name",
+        "Category": "Custom",
+        "Address": "L5J, Mississauga, ON, Canada",
+        "Company": "Zolarity",
+        "Status": "Pending",
+        "Range": 8,
+        "More Info": "http://www.thexs.ca/posts/mapping-sheets-custom-icons-on-your-google-maps",
+        "Picture": "https://sites.google.com/a/thexs.ca/newgxs/assets/images/YellowFlag.png",
+        "Notes": "Using a custom icon for this category"
+      },
+      "id": 2
+    },
+    {
+      "latitude": 43.555186,
+      "longitude": -79.510141,
+      "properties": {
+        "Name": "Great view",
+        "Category": "Extras",
+        "Address": "From the lake, using coordinates",
+        "Company": "Acusage",
+        "Status": "Pending",
+        "Range": 6,
+        "More Info": "http://www.thexs.ca/posts/what-if-i-already-have-some-map-coordinates-latitude-and-longitude",
+        "Picture": "coming soon...",
+        "Notes": "Using Latitude and Longitude columns with values instead of a location address. Latitude must be between -90 and 90, excluding the extremes. Longitude must be between -180 and 180, including the extremes.",
+        "Latitude": 43.555186,
+        "Longitude": -79.510141
+      },
+      "id": 3
+    },
+    {
+      "latitude": 43.6596398,
+      "longitude": -79.3106414,
+      "properties": {
+        "Name": "Woodbine Beach",
+        "Category": "Extras",
+        "Address": "Toronto, ON M4L 3W6, Canada",
+        "Company": "Talendula",
+        "Status": "Open,Waiting",
+        "Range": 5,
+        "Picture": "https://sites.google.com/a/thexs.ca/newgxs/assets/images/xsMapping-128.png",
+        "Notes": "Showing an image"
+      },
+      "id": 4
+    },
+    {
+      "latitude": 43.7281335,
+      "longitude": -79.57461219999999,
+      "properties": {
+        "Name": "Ayers Logan",
+        "Category": "Extras",
+        "Address": "Rexdale, Toronto, ON, Canada",
+        "Company": "Ezent",
+        "Status": "Escalated",
+        "Range": 5,
+        "More Info": "http://www.thexs.ca/",
+        "Notes": "Including a web link, using ...⬈ as the link placeholder"
+      },
+      "id": 5
+    },
+    {
+      "latitude": 43.6024137,
+      "longitude": -79.5434841,
+      "properties": {
+        "Name": "Dunlap Fleming",
+        "Category": "Issues",
+        "Address": "Etobicoke, ON M8W, Canada",
+        "Company": "Goko",
+        "Status": "Close",
+        "Range": 7
+      },
+      "id": 6
+    },
+    {
+      "latitude": 43.6517334,
+      "longitude": -79.6670506,
+      "properties": {
+        "Name": "Ferguson Sparks",
+        "Category": "Issues",
+        "Address": "Mississauga, ON L5T, Canada",
+        "Company": "Extragene",
+        "Status": "Open",
+        "Range": 7
+      },
+      "id": 7
+    },
+    {
+      "latitude": 43.7248531,
+      "longitude": -79.3051212,
+      "properties": {
+        "Name": "Forbes Riddle",
+        "Category": "Issues",
+        "Address": "Eglinton Ave E, Ontario, Canada",
+        "Company": "Earthwax",
+        "Status": "Escalated",
+        "Range": -5
+      },
+      "id": 8
+    },
+    {
+      "latitude": 43.6289467,
+      "longitude": -79.3944199,
+      "properties": {
+        "Name": "Marshall Robles",
+        "Category": "Pending",
+        "Address": "Toronto Islands, Toronto, ON, Canada",
+        "Company": "Dogtown",
+        "Status": "Close",
+        "Range": 7,
+        "Picture": "https://sites.google.com/a/thexs.ca/newgxs/assets/images/view-from-toronto-islands.png",
+        "Notes": "Including a picture taken from this location"
+      },
+      "id": 9
+    },
+    {
+      "latitude": 43.7184961,
+      "longitude": -79.2914268,
+      "properties": {
+        "Name": "Mcbride Hunter",
+        "Category": "Pending",
+        "Address": "Clairlea, Toronto, ON, Canada",
+        "Company": "Eternis",
+        "Status": "Open",
+        "Range": 4
+      },
+      "id": 10
+    },
+    {
+      "latitude": 43.6152267,
+      "longitude": -79.5522242,
+      "properties": {
+        "Name": "Cornelia Daniel",
+        "Category": "Pending",
+        "Address": "Sherway Gardens Rd, Etobicoke, ON, Canada",
+        "Company": "Digiprint",
+        "Status": "Open",
+        "Range": 9
+      },
+      "id": 11
+    },
+    {
+      "latitude": 43.7315479,
+      "longitude": -79.7624177,
+      "properties": {
+        "Name": "Rene Norman",
+        "Category": "Pending",
+        "Address": "Brampton, ON, Canada",
+        "Company": "Quilk",
+        "Status": "Pending",
+        "Range": 10
+      },
+      "id": 12
+    }
+  ]
+})

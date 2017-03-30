@@ -1,0 +1,152 @@
+<dom-module id="xm-data">
+  <template>
+    <style>
+      paper-dialog { width:500px; }
+    </style>
+    
+    <paper-dialog modal opened="[[errorShow]]">
+    <h2>Warning: Problem loading the .json data file</h2>
+      <div>
+        <p>The Mapping web app could not load the .json map data file this time.</p>
+        <p>You might not have access to the map data file, or you are logged in with multiple Google accounts and not using the default account now.</p>
+        <p>Please, read <a href="http://www.thexs.ca/posts/warning-problem-loading-the-map-data">this post</a> with more details on how to avoid this issue.</p>
+        <p>Or, <a href="http://www.thexs.ca/xsmapping/faq-and-feedback">submit a feedback ticket</a> if this keeps happening after you try those suggestions.</p>
+      </div>
+      <div class="buttons">
+        <paper-icon-button icon="close" affirmative dialog-dismiss autofocus ></paper-icon-button>
+      </div>
+    </paper-dialog>
+    
+    <byutv-jsonp
+      auto
+      url="https://drive.google.com/uc"
+      params="{{params}}"
+      callback-value="getJsonCallback"
+      last-response="{{pattern}}"
+      last-error="{{lastError}}"
+      verbose="true"
+      debounce-duration="300"></byutv-jsonp>
+    
+  </template>
+  <script>
+    Polymer({
+      is: "xm-data",
+      properties: {
+        fields: { type:Object, notify:true },
+        groups: { type:String, notify:true },
+        groupBy: {type:Object, notify:true},
+        filters: { type:Array, notify:true },
+        header: { type:String, notify:true },
+        headers: { type:Array, notify:true },
+        locations: { type:Array, notify:true },
+        custom: {type:Object, notify:true},
+        pattern: {type:Object, notify:true, observer:"_jsonp"},
+        lastError: {type:Object, notify:true, observer:"_error"},
+        errorShow: { type:Boolean, value:false },
+        params: { type:Object, notify:true, value: {"authuser":0, "export":"download", "id":app.query.fid} },
+        done: { type:Boolean, value:false, notify:true },
+      },
+      _jsonp: function(r){
+        console.log("Observing");
+        if (this.pattern == null) return;
+        
+        document.title = this.pattern.custom.pageTitle || "Mapping by theXS";
+        
+        this.fields = this.pattern.fields;
+        this.header = this.pattern.fields.name;
+        this.headers = this.pattern.custom.headers ? this.pattern.custom.headers.split(",") : this.pattern.headers;
+        this.groupBy = this.pattern.groupBy;
+        
+        this.filters = this.pattern.filters;
+        this.html = this.pattern.html;
+        this.custom = this.pattern.custom;
+        
+        
+        document.querySelector("xm-app-main").set("mapikey", this.custom.mapikey || "[my-maps-api-key]");
+        
+        app.global = this.pattern.global;
+        
+        this.language = app.global.language || "en";
+        
+        
+        app.custom = this.custom;
+        app.custom.titleTemplate = app.custom.titleTemplate ||
+          sprintf("{{%s}} ({{%s}})\n {{%s}}", this.fields.name, this.fields.filter, this.fields.address);
+        app.custom.listingTemplate = app.custom.listingTemplate ||
+          sprintf("{{%s}}\n {{%s}}", this.fields.name, this.fields.address);
+        
+        this.search = "";
+        var group = this.pattern.fields.filter;
+        var icons = this.groupBy.list.reduce(function(p,v){ p[v.value] = v.icon.url; return p; }, {});
+        
+        this.pattern.locations.forEach(function(v){
+          
+          v.icon = icons[v.properties[group]];
+          v.title = app.custom.titleTemplate.mustache(v.properties);
+          
+        });
+        this.locations = this.pattern.locations;
+        console.log("locations set");
+                
+        this.groups = this.groupBy.list.map(function(v){ return v.value; }).toString();
+        
+        
+        
+        if (app.deferring) this._waitForMapIdle();
+        
+        
+        document.querySelector("xm-filters").hide = false;
+        
+        
+        this.async(function(){
+          console.log("fitToMarkers");
+          if (true) document.querySelector("#maplocas").fitToMarkers = false;
+          
+          window.onresize();
+          
+          document.querySelector("xm-filters").hide = !!app.custom.hideFilters;
+        }, 5000);
+        
+        
+        this.pattern = null;
+        
+        if (!app.deferring) this.done = true;
+        if (!this.html.postdata) app.working(false);
+      },
+      
+      
+      _waitForMapIdle: function(){
+        if (!app.mapidle)
+          this.async(function(){
+            console.log("waiting");
+            this._waitForMapIdle();
+        }, 100);
+        else {
+          console.log("waiting-done");
+          if (this.html.postdata)
+            this.importHref(this.html.postdata + "?" + (new Date().getTime()),
+              function(e){ importHrefBack("OK", e); this.done = true; }, function(e){ importHrefBack("Error", e); }
+            );
+          if (this.html.infowindow)
+            this.importHref(this.html.infowindow + "?" + (new Date().getTime()),
+              function(e){ importHrefBack("OK", e); }, function(e){ importHrefBack("Error", e); }
+            );
+          if (this.html.locaslist)
+            this.importHref(this.html.locaslist + "?" + (new Date().getTime()),
+              function(e){ importHrefBack("OK", e); }, function(e){ importHrefBack("Error", e); }
+            );
+        }
+      },
+      
+      _error: function(e){
+        console.log("jsonp error");
+        this.errorShow = true;
+        app.working(false);
+      },
+    });
+    function importHrefBack(message, e){
+      console.log(message + ": " + e.target.href);
+      if (e.type == "error") console.log(e);
+    }
+  </script>
+</dom-module>

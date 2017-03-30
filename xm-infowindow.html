@@ -1,0 +1,110 @@
+<dom-module id="xm-infowindow">
+  <template>
+    <style include="iron-flex iron-flex-alignment iron-flex-factors">
+      paper-header-panel { max-height:420px; }
+      .paper-header { height: 50px; font-size: 16px; }
+      .content { padding:10px 0 0 5px; }
+      .line { margin-bottom: 1px; }
+      .fw { font-weight: 500; }
+      .thumb { max-width:160px; }
+    </style>
+    
+    <paper-header-panel id="panel" style="height:[[panelHeight]]; width:[[panelWidth]];">
+      <div class="paper-header horizontal layout center" >
+        <span class="flex" >[[headerOhm]]</span>
+        <template is="dom-if" if="[[devMode]]">
+          <paper-icon-button icon="build" on-click="_test" ></paper-icon-button>
+        </template>
+      </div>
+      
+      <div id="content" class="content">
+        
+        <template is="dom-repeat" items="[[itemOhm]]" as="ko" >
+          <div class="horizontal layout start line">
+            <div class="flex fw">[[ko.header]]:</div>
+            
+            <template is="dom-if" if="[[ko.text]]">
+              <div class="flex-2" standard-plain-text >[[ko.value]]</div>
+            </template>
+            <template is="dom-if" if="[[ko.image]]">
+              <div class="flex-2" ><img class="thumb" src="[[ko.value]]" /></div>
+            </template>
+            <template is="dom-if" if="[[ko.link]]">
+              <a class="flex-2" href="[[ko.value]]" target="_blank" >...⬈</a>
+            </template>
+            <template is="dom-if" if="[[ko.tags]]">
+              <div class="flex-2" inner-h-t-m-l="[[ko.inner]]" any-tag-experimental ></div>            
+            </template>
+            
+          </div>
+        </template>
+        
+      </div>
+    </paper-header-panel>    
+  </template>
+  <script>
+    Polymer({
+      is: "xm-infowindow",
+      properties: {
+        item: {type:Object, notify:true, observer:"_itemChg" },
+		header: String,
+		headers: Array,
+        itemOhm: Array,
+        devMode: { value:app.devMode },
+        panelHeight: { value:"420px" }, 
+        panelWidth: { value:"250px" }, 
+      },
+      
+      attached: function() {
+        
+        this.async(function(){
+          var height = this.$.content.offsetHeight;
+          console.log("iw-attached", height);
+          if (height > 0) this.panelHeight = (height + 50 + 10 + 10).toString().concat("px"); 
+        }, 750); 
+      },
+      
+      _itemChg: function(e) {
+        
+        var props = this.item.properties;
+        this.headerOhm = props[this.header];
+        this.itemOhm = this.headers.map(function(k){
+          var tag = testURL(props[k]);
+          var obj = {
+            header: k,
+            value: props[k] || ""
+          }
+          obj[tag] = true;
+          obj.inner = obj.tags ? obj.value : "";
+          return obj;
+        });
+
+      },
+      
+      _test: function(e){
+        console.log(this.item);
+
+      },
+    });
+    
+    
+    
+    
+    var __urlRegex = /^(\b(https?|fxtp|fxile):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])$/ig;
+    var __imgRegex = /^https:.*\.(?:jpe?g|gif|png|svg)$/i;
+    function testURL(s){
+
+      __urlRegex.lastIndex=0;
+      if (__urlRegex.test(s)) {
+        __imgRegex.lastIndex=0;
+        if (__imgRegex.test(s)) return "image";
+        
+        return "link"
+      }
+      if (app.custom.allowTags && s && s[0] === "<") return "tags";
+      return "text";
+    }
+    
+  </script>
+</dom-module>
+
